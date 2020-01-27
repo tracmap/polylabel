@@ -1,9 +1,7 @@
 'use strict';
 
-var Queue = require('tinyqueue');
+import Queue from 'tinyqueue';
 
-module.exports = polylabel;
-module.exports.default = polylabel;
 
 function polylabel(polygon, precision, debug) {
     precision = precision || 1.0;
@@ -154,3 +152,6 @@ function getSegDistSq(px, py, a, b) {
 
     return dx * dx + dy * dy;
 }
+
+
+export default polylabel
