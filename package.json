@@ -1,6 +1,10 @@
 {
-  "name": "@mapbox/polylabel",
-  "version": "1.0.2",
+  "name": "@tracmap/polylabel",
+  "repository": "git@github.com:tracmap/polylabel.git",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
+  "version": "1.0.3",
   "description": "A JS library for finding optimal label position inside a polygon",
   "main": "polylabel.js",
   "scripts": {
