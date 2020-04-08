@@ -5,6 +5,9 @@ var Queue = require('tinyqueue');
 module.exports = polylabel;
 module.exports.default = polylabel;
 
+const MAX_CELL = 100;
+const MAX_EFFORT = 100;
+
 function getFitnessFunc(centroid, polygonSize) {
     var maxSize = Math.max(polygonSize[0], polygonSize[1]);
 
@@ -39,6 +42,14 @@ function polylabel(polygon, precision, debug) {
 
     var width = maxX - minX;
     var height = maxY - minY;
+
+    var centroid = getCentroid(polygon);
+
+    // If aspect ratio is very thin
+    if (((width / height) >= MAX_CELL) || ((height / width) >= MAX_CELL)) {
+        return centroid
+    }
+
     var cellSize = Math.min(width, height);
     var h = cellSize / 2;
 
@@ -47,7 +58,6 @@ function polylabel(polygon, precision, debug) {
     // a priority queue of cells in order of their "potential" (max distance to polygon)
     var cellQueue = new Queue(null, compareMax);
 
-    var centroid = getCentroid(polygon);
     var fitnessFunc = getFitnessFunc(centroid, [width, height]);
 
     // cover polygon with initial cells
@@ -62,6 +72,7 @@ function polylabel(polygon, precision, debug) {
 
     var numProbes = cellQueue.length;
 
+    var effortCounter = 0;
     while (cellQueue.length) {
         // pick the most promising cell from the queue
         var cell = cellQueue.pop();
@@ -70,6 +81,11 @@ function polylabel(polygon, precision, debug) {
         if (cell.fitness > bestCell.fitness) {
             bestCell = cell;
             if (debug) console.log('found best %d after %d probes', Math.round(1e4 * cell.d) / 1e4, numProbes);
+        }
+
+        effortCounter++;
+        if (effortCounter >= MAX_EFFORT) {
+            return centroid
         }
 
         // do not drill down further if there's no chance of a better solution
