@@ -4,7 +4,7 @@
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/"
   },
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "A JS library for finding optimal label position inside a polygon",
   "main": "polylabel.js",
   "scripts": {
