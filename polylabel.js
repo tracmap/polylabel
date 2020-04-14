@@ -5,9 +5,6 @@ var Queue = require('tinyqueue');
 module.exports = polylabel;
 module.exports.default = polylabel;
 
-const MAX_CELL = 100;
-const MAX_EFFORT = 100;
-
 function getFitnessFunc(centroid, polygonSize) {
     var maxSize = Math.max(polygonSize[0], polygonSize[1]);
 
@@ -27,7 +24,10 @@ function getFitnessFunc(centroid, polygonSize) {
     });
 }
 
-function polylabel(polygon, precision, debug) {
+function polylabel(polygon, precision, options = {
+    maxCells: 200,
+    maxEffort: 200
+}) {
     precision = precision || 1.0;
 
     // find the bounding box of the outer ring
@@ -46,7 +46,7 @@ function polylabel(polygon, precision, debug) {
     var centroid = getCentroid(polygon);
 
     // If aspect ratio is very thin
-    if (((width / height) >= MAX_CELL) || ((height / width) >= MAX_CELL)) {
+    if (((width / height) >= options.maxCells) || ((height / width) >= options.maxCells)) {
         return centroid
     }
 
@@ -80,11 +80,11 @@ function polylabel(polygon, precision, debug) {
         // update the best cell if we found a better one
         if (cell.fitness > bestCell.fitness) {
             bestCell = cell;
-            if (debug) console.log('found best %d after %d probes', Math.round(1e4 * cell.d) / 1e4, numProbes);
+            if (options.debug) console.log('found best %d after %d probes', Math.round(1e4 * cell.d) / 1e4, numProbes);
         }
 
         effortCounter++;
-        if (effortCounter >= MAX_EFFORT) {
+        if (effortCounter >= options.maxEffort) {
             return centroid
         }
 
@@ -100,7 +100,7 @@ function polylabel(polygon, precision, debug) {
         numProbes += 4;
     }
 
-    if (debug) {
+    if (options.debug) {
         console.log('num probes: ' + numProbes);
         console.log('best distance: ' + bestCell.d);
     }
